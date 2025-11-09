@@ -1,0 +1,34 @@
+/* public/css/admin-reportes.css */
+
+/* Ajustes específicos para la vista de reportes, aprovechando variables y utilidades de admin-usuarios.css */
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.stats-cards .col-md-3,
+.stats-cards .col-6 {
+  margin-bottom: 1rem;
+}
+
+.stat-card-mini { display: flex; align-items: center; justify-content: space-between; }
+
+.stat-card-mini .stat-icon { width: 56px; height: 56px; border-radius: 10px; display:flex; align-items:center; justify-content:center; font-size:1.4rem }
+
+.stat-card-mini .stat-info { flex:1; margin-left:1rem }
+
+.stat-card-mini .stat-info h3 { margin: 0; font-size: 1.6rem }
+
+.stat-card-mini .stat-info p { margin: 0; color: #6c757d }
+
+/* pequeños tweaks para listas */
+.list-group-item { display:flex; justify-content:space-between; align-items:center; padding:0.75rem 1rem }
+
+/* tabla de citas ajuste */
+#tablaCitas .table { margin-bottom: 0 }
+
+/* responsive tweaks */
+@media (max-width: 992px) {
+  .stat-card-mini .stat-icon { width: 48px; height:48px }
+}

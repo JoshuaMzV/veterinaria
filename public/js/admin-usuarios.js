@@ -565,6 +565,15 @@ function configurarEventListeners() {
     cerrarSesionBtn.addEventListener('click', cerrarSesion);
   }
 
+  // Mi Perfil
+  const btnMiPerfil = document.getElementById('btnMiPerfil');
+  if (btnMiPerfil) {
+    btnMiPerfil.addEventListener('click', (e) => {
+      e.preventDefault();
+      irAlPerfil();
+    });
+  }
+
   // Actualizar usuarios
   const btnActualizar = document.getElementById('btnActualizarUsuarios');
   if (btnActualizar) {
@@ -740,3 +749,9 @@ function iniciarActualizacionAutomatica() {
 window.addEventListener('beforeunload', () => {
   console.log('🧹 Limpieza al salir');
 });
+
+// ==================== NAVEGACIÓN ====================
+
+function irAlPerfil() {
+  window.location.href = '/admin-perfil.html';
+}

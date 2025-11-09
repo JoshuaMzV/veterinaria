@@ -138,6 +138,7 @@ export const obtenerUsuarioPorIdModel = (id, callback) => {
       id, 
       nombre, 
       email, 
+      password,
       telefono, 
       direccion, 
       rol,
@@ -197,9 +198,9 @@ export const actualizarUsuarioModel = (id, datos, callback) => {
     valores.push(datos.direccion);
   }
   
-  if (datos.password !== undefined) {
+  if (datos.passwordNueva !== undefined) {
     campos.push('password = ?');
-    valores.push(datos.password);
+    valores.push(datos.passwordNueva);
   }
   
   if (campos.length === 0) {

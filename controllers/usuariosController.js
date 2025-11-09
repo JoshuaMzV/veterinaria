@@ -328,13 +328,13 @@ export const obtenerUsuarioPorId = (req, res) => {
 export const actualizarUsuario = (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, email, telefono, rol, direccion } = req.body;
+    const { nombre, email, telefono, rol, direccion, passwordActual, passwordNueva } = req.body;
 
     console.log('📝 Actualizando usuario ID:', id);
-    console.log('Datos recibidos:', { nombre, email, telefono, rol, direccion });
+    console.log('Datos recibidos:', { nombre, email, telefono, rol, direccion, passwordActual, passwordNueva});
 
     // Validar que al menos un campo esté presente
-    if (!nombre && !email && !telefono && !rol && !direccion) {
+    if (!nombre && !email && !telefono && !rol && !direccion && !passwordActual && !passwordNueva) {
       return res.status(400).json({ 
         error: 'Debe proporcionar al menos un campo para actualizar' 
       });
@@ -371,6 +371,8 @@ export const actualizarUsuario = (req, res) => {
     if (telefono) datosActualizacion.telefono = telefono;
     if (rol) datosActualizacion.rol = rol;
     if (direccion !== undefined) datosActualizacion.direccion = direccion;
+    if (passwordActual) datosActualizacion.passwordActual = passwordActual;
+    if (passwordNueva) datosActualizacion.passwordNueva = passwordNueva;
 
     actualizarUsuarioModel(id, datosActualizacion, (err, resultado) => {
       if (err) {
@@ -455,6 +457,102 @@ export const eliminarUsuario = (req, res) => {
       error: 'Error interno del servidor',
       details: error.message 
     });
+  }
+};
+
+// ==================== PERFIL DEL USUARIO (SENCILLO) ====================
+
+// Obtener perfil: admite header X-User-Id o query ?userId, por defecto 1 (entorno dev)
+export const obtenerPerfil = (req, res) => {
+  try {
+    const userId = req.header('X-User-Id') || req.query.userId || 1;
+    console.log('Obtener perfil para userId:', userId);
+
+    obtenerUsuarioPorIdModel(userId, (err, usuario) => {
+      if (err) {
+        console.error('Error al obtener perfil:', err);
+        return res.status(500).json({ error: 'Error al obtener el perfil' });
+      }
+      if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
+      res.json({ success: true, data: usuario });
+    });
+  } catch (error) {
+    console.error('Excepción en obtenerPerfil:', error);
+    res.status(500).json({ error: 'Error interno' });
+  }
+};
+
+// Actualizar perfil: permite nombre, email, telefono, direccion y cambio de contraseña
+export const actualizarPerfil = (req, res) => {
+  try {
+    const userId = req.header('X-User-Id') || req.query.userId || 1;
+    const { nombre, email, telefono, direccion, passwordActual, passwordNueva } = req.body;
+    console.log('Actualizar perfil userId:', userId, 'datos:', { nombre, email, telefono, direccion, passwordActual, passwordNueva });
+
+    // Compilar datos a actualizar
+    const datos = {};
+    if (nombre) datos.nombre = formatearNombre(nombre);
+    if (email) {
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(email)) return res.status(400).json({ error: 'Formato de email inválido' });
+      datos.email = email.toLowerCase();
+    }
+    if (telefono) {
+      const telefonoRegex = /^[0-9]{8}$/;
+      if (!telefonoRegex.test(telefono)) return res.status(400).json({ error: 'El teléfono debe tener 8 dígitos' });
+      datos.telefono = telefono;
+    }
+    if (direccion !== undefined) datos.direccion = direccion;
+
+    if (passwordNueva) {
+      // Validar contraseña actual y nueva
+      if (!passwordActual) return res.status(400).json({ error: 'Se requiere la contraseña actual para cambiarla' });
+      // Obtener usuario para verificar contraseña actual
+      obtenerUsuarioPorIdModel(userId, (err, usuario) => {
+        if (err) return res.status(500).json({ error: 'Error al verificar contraseña' });
+        if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
+        
+        console.log('🔍 Verificando contraseña:');
+        console.log('  Contraseña en BD:', usuario.password);
+        console.log('  Contraseña recibida:', passwordActual);
+        console.log('  ¿Coinciden?:', usuario.password === passwordActual);
+        
+        if (usuario.password !== passwordActual) {
+          console.log('❌ Contraseñas no coinciden');
+          return res.status(401).json({ error: 'Contraseña actual incorrecta' });
+        }
+
+        // Validar fuerza de nueva contraseña
+        const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+        if (!passRegex.test(passwordNueva)) return res.status(400).json({ error: 'La nueva contraseña debe tener al menos 8 caracteres, incluir mayúsculas y números' });
+
+        datos.passwordNueva = passwordNueva;
+        // Ejecutar la actualización
+        actualizarUsuarioModel(userId, datos, (err2, resultado) => {
+          if (err2) {
+            console.error('Error al actualizar perfil:', err2);
+            return res.status(500).json({ error: 'Error al actualizar el perfil' });
+          }
+          res.json({ success: true, message: 'Perfil actualizado correctamente' });
+        });
+      });
+      return;
+    }
+
+    // Si no hay cambio de contraseña, actualizar directamente
+    if (Object.keys(datos).length === 0) return res.status(400).json({ error: 'No hay datos para actualizar' });
+
+    actualizarUsuarioModel(userId, datos, (err, resultado) => {
+      if (err) {
+        console.error('Error al actualizar perfil:', err);
+        return res.status(500).json({ error: 'Error al actualizar' });
+      }
+      res.json({ success: true, message: 'Perfil actualizado correctamente' });
+    });
+
+  } catch (error) {
+    console.error('Excepción en actualizarPerfil:', error);
+    res.status(500).json({ error: 'Error interno' });
   }
 };
 

@@ -91,12 +91,12 @@ async function cargarClienteId() {
     try {
         console.log('Buscando cliente para usuario ID:', usuarioActual.id);
         
-        const response = await fetch(`/api/clientes`);
+        const response = await fetch(`/api/clientes/`);
         if (!response.ok) throw new Error('Error al obtener clientes');
         
         const clientes = await response.json();
-        const cliente = clientes.find(c => c.usuario_id === usuarioActual.id);
-        
+        const cliente = clientes.find(c => c.id === usuarioActual.id);
+
         if (cliente) {
             clienteId = cliente.id;
             console.log('Cliente ID asignado:', clienteId);
@@ -355,10 +355,10 @@ function cargarMascotasTab() {
 
     // Mostrar las mascotas
     let html = '<div class="row g-3">';
-
+    console.log(mascotasData)
     mascotasData.forEach(mascota => {
         const avatar = obtenerAvatarMascota(mascota.especie);
-        const edad = calcularEdad(mascota.fecha_nacimiento);
+        //const edad = calcularEdad(mascota.fecha_nacimiento);
         
         html += `
             <div class="col-md-6 col-lg-4">
@@ -368,7 +368,7 @@ function cargarMascotasTab() {
                         <h6 class="card-title">${mascota.nombre}</h6>
                         <p class="card-text text-muted">
                             ${mascota.especie} - ${mascota.raza}<br>
-                            <small>${edad}</small>
+                            <small>${mascota.edad} año${mascota.edad !== 1 ? 's' : ''}</small>
                         </p>
                     </div>
                 </div>

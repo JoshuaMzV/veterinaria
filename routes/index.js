@@ -22,7 +22,7 @@ router.get('/mascotas', (req, res) => {
       u.nombre as propietario_nombre,
       u.email as propietario_email
     FROM mascota m
-    LEFT JOIN usuarios u ON m.usuario_id = u.id
+    LEFT JOIN usuarios u ON m.cliente_id = u.id
     ORDER BY m.created_at DESC
   `;
   
@@ -50,7 +50,7 @@ router.get('/mascotas/:id', (req, res) => {
       u.email as propietario_email,
       u.telefono as propietario_telefono
     FROM mascota m
-    LEFT JOIN usuarios u ON m.usuario_id = u.id
+    LEFT JOIN usuarios u ON m.cliente_id = u.id
     WHERE m.id = ?
   `;
   
@@ -86,8 +86,8 @@ router.get('/clientes', (req, res) => {
       COUNT(DISTINCT m.id) as total_mascotas,
       COUNT(DISTINCT c.id) as total_citas
     FROM usuarios u
-    LEFT JOIN mascota m ON m.usuario_id = u.id
-    LEFT JOIN cita c ON c.usuario_id = u.id
+    LEFT JOIN mascota m ON m.cliente_id = u.id
+    LEFT JOIN cita c ON c.cliente_id = u.id
     WHERE u.rol = 'cliente'
     GROUP BY u.id, u.nombre, u.email, u.telefono, u.direccion, u.fecha_creacion
     ORDER BY u.fecha_creacion DESC
@@ -116,8 +116,8 @@ router.get('/clientes/:id', (req, res) => {
       COUNT(DISTINCT m.id) as total_mascotas,
       COUNT(DISTINCT c.id) as total_citas
     FROM usuarios u
-    LEFT JOIN mascota m ON m.usuario_id = u.id
-    LEFT JOIN cita c ON c.usuario_id = u.id
+    LEFT JOIN mascota m ON m.cliente_id = u.id
+    LEFT JOIN cita c ON c.cliente_id = u.id
     WHERE u.id = ? AND u.rol = 'cliente'
     GROUP BY u.id
   `;

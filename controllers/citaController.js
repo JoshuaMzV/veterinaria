@@ -14,13 +14,13 @@ export const obtenerCitas = (req, res) => {
 
 // Obtener citas por cliente
 export const obtenerCitasPorCliente = (req, res) => {
-  const { cliente_id } = req.params;
+  const { usuario_id } = req.params;
 
-  if (!cliente_id) {
+  if (!usuario_id) {
     return res.status(400).json({ error: 'ID de cliente requerido' });
   }
 
-  Cita.obtenerCitasPorCliente(cliente_id, (err, resultados) => {
+  Cita.obtenerCitasPorCliente(usuario_id, (err, resultados) => {
     if (err) {
       console.error('Error al obtener citas del cliente:', err);
       return res.status(500).json({ error: 'Error al obtener las citas del cliente' });
@@ -60,11 +60,13 @@ export const crearCita = (req, res) => {
     sucursal_id,
     fecha, 
     hora, 
-    estado 
+    estado ,
+    motivo,
+    observaciones
   } = req.body;
 
   console.log('Datos recibidos para crear cita:', {
-    cliente_id, mascota_id, servicio_id, sucursal_id, fecha, hora
+    cliente_id, mascota_id, servicio_id, sucursal_id, fecha, hora, motivo, observaciones
   });
 
   // Validar campos requeridos
@@ -176,7 +178,9 @@ export const crearCita = (req, res) => {
       sucursal_id: parseInt(sucursal_id),
       fecha,
       hora,
-      estado: estado || 'pendiente'
+      estado: estado || 'pendiente',
+      motivo,
+      observaciones
     };
 
     Cita.crearCita(datosCita, (err, result) => {
@@ -229,18 +233,30 @@ export const actualizarCita = (req, res) => {
       return res.status(404).json({ error: 'Cita no encontrada' });
     }
 
-    // No permitir modificar citas completadas
+    // No permitir modificar citas completadas, salvo que se envíe `force: true` (uso administrativo)
     if (citaExistente.estado === 'completada') {
-      return res.status(400).json({ 
-        error: 'No se puede modificar una cita completada' 
-      });
+      // Aceptar si viene force=true en el body o si la petición viene con cabecera administrativa
+      const hasForce = datosActualizar && (datosActualizar.force === true || datosActualizar.force === 'true');
+      const isAdminHeader = req.get('X-Admin') === '1' || req.get('X-Admin') === 'true' || (req.get('Referer') || '').includes('/admin');
+      if (!(hasForce || isAdminHeader)) {
+        return res.status(400).json({ 
+          error: 'No se puede modificar una cita completada (usar force=true o cabecera X-Admin)'
+        });
+      }
+      // eliminar flag force para evitar persistirlo
+      if (datosActualizar && datosActualizar.force) delete datosActualizar.force;
     }
 
-    // No permitir modificar citas confirmadas (solo cancelar)
-    if (citaExistente.estado === 'confirmada' && datosActualizar.estado !== 'cancelada') {
-      return res.status(400).json({ 
-        error: 'No se puede modificar una cita confirmada, solo se puede cancelar' 
-      });
+    // No permitir modificar citas confirmadas (solo cancelar o cambiar estado administrativamente)
+    if (citaExistente.estado === 'confirmada' && datosActualizar.estado && datosActualizar.estado !== 'cancelada') {
+      const isAdminRequest = req.get('X-Admin') === '1' || req.get('X-Admin') === 'true' || (req.get('Referer') || '').includes('/admin');
+      const hasForce = datosActualizar && (datosActualizar.force === true || datosActualizar.force === 'true');
+      
+      if (!(isAdminRequest || hasForce)) {
+        return res.status(400).json({ 
+          error: 'No se puede modificar una cita confirmada, solo se puede cancelar' 
+        });
+      }
     }
 
     // Validar fecha si se está actualizando
@@ -265,19 +281,19 @@ export const actualizarCita = (req, res) => {
 
     // Validar hora si se está actualizando
     if (datosActualizar.hora) {
-      const horaRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+      const horaRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/;
       if (!horaRegex.test(datosActualizar.hora)) {
         return res.status(400).json({ 
-          error: 'Formato de hora inválido. Use HH:MM' 
+          error: 'Formato de hora inválido. Use HH:MM:SS' 
         });
       }
     }
 
+    const fechaFormateada = new Date(citaExistente.fecha).toISOString().split('T')[0];
     // Si se está cambiando fecha u hora, verificar disponibilidad
-    if ((datosActualizar.fecha && datosActualizar.fecha !== citaExistente.fecha) ||
-        (datosActualizar.hora && datosActualizar.hora !== citaExistente.hora)) {
+    if ((datosActualizar.fecha && datosActualizar.fecha !== fechaFormateada) || (datosActualizar.hora && datosActualizar.hora !== citaExistente.hora)) {
       
-      const fechaFinal = datosActualizar.fecha || citaExistente.fecha;
+      const fechaFinal = datosActualizar.fecha || fechaFormateada;
       const horaFinal = datosActualizar.hora || citaExistente.hora;
       const sucursalFinal = datosActualizar.sucursal_id || citaExistente.sucursal_id;
       
@@ -289,7 +305,7 @@ export const actualizarCita = (req, res) => {
 
         if (!disponible) {
           return res.status(409).json({ 
-            error: 'El nuevo horario seleccionado no está disponible' 
+            error: 'El nuevo horario seleccionado no está disponible '+fechaFormateada+'-'+citaExistente.hora
           });
         }
 

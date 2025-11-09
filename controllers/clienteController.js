@@ -2,7 +2,7 @@
 import * as Cliente from '../models/cliente.js';
 
 // Obtener todos los clientes
-export const obtenerClientes = (req, res) => {
+export const obtenerClientesController = (req, res) => {
   Cliente.obtenerClientes((err, resultados) => {
     if (err) {
       return res.status(500).json({ error: 'Error al obtener los clientes' });
@@ -12,7 +12,7 @@ export const obtenerClientes = (req, res) => {
 };
 
 // Agregar un nuevo cliente
-export const agregarCliente = (req, res) => {
+export const agregarClienteController = (req, res) => {
   const { usuario_id } = req.body;
 
   Cliente.agregarCliente(usuario_id, (err, result) => {

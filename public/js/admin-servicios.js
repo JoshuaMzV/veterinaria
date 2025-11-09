@@ -970,6 +970,12 @@ function configurarEventListeners() {
     }
   });
 
+  // Mi Perfil
+  document.getElementById('btnMiPerfil')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.location.href = '/admin-perfil.html';
+  });
+
   // Actualizar datos
   document.getElementById('btnActualizarDatos')?.addEventListener('click', async () => {
     await cargarServicios();

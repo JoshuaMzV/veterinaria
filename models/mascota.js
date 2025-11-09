@@ -11,7 +11,7 @@ export const obtenerMascotas = (callback) => {
       tm.nombre as tipo_nombre,
       tm.emoji as tipo_emoji
     FROM mascota m
-    LEFT JOIN usuarios u ON m.usuario_id = u.id
+    LEFT JOIN usuarios u ON m.cliente_id = u.id
     LEFT JOIN tipo_mascota tm ON m.tipo_mascota_id = tm.id
     ORDER BY m.created_at DESC
   `;
@@ -33,7 +33,7 @@ export const obtenerMascotasPorCliente = (usuario_id, callback) => {
       tm.emoji as tipo_emoji
     FROM mascota m
     LEFT JOIN tipo_mascota tm ON m.tipo_mascota_id = tm.id
-    WHERE m.usuario_id = ?
+    WHERE m.cliente_id = ?
     ORDER BY m.created_at DESC
   `;
   
@@ -235,12 +235,11 @@ export const obtenerTodasLasMascotas = (callback) => {
   const query = `
     SELECT 
       m.*,
-      c.id as cliente_id,
+      u.id as cliente_id,
       u.nombre as propietario_nombre,
       u.email as propietario_email
     FROM mascota m
-    INNER JOIN cliente c ON m.cliente_id = c.id
-    INNER JOIN usuarios u ON c.usuario_id = u.id
+    INNER JOIN usuarios u ON m.cliente_id = u.id
     ORDER BY m.nombre ASC
   `;
   

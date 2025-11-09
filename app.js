@@ -9,10 +9,13 @@ import sucursalRoutes from './routes/sucursalRoutes.js';
 import usuariosRoutes from './routes/usuariosRoutes.js';
 import servicioRoutes from './routes/servicioRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import clienteRouter from './routes/clienteRoutes.js'
+import clienteActividadRouter from './routes/clienteActividadRoutes.js'
 
 import routes from './routes/index.js';
 
 import mascotaRoutes from './routes/mascotaRoutes.js';
+import reportesRoutes from './routes/reportesRoutes.js';
 import { iniciarScheduler } from './services/citaScheduler.js';
 
 // Cargar variables de entorno PRIMERO
@@ -55,7 +58,9 @@ app.get('/', (req, res) => {
 // ORDEN CRÍTICO: Rutas más específicas PRIMERO, genéricas ÚLTIMO
 
 app.use('/api/admin', adminRoutes);
-// 1. Administración (más específica)
+// 1. Usuarios (muy específica con /usuarios/perfil)
+app.use('/api', usuariosRoutes);
+// 2. Administración (más específica)
 app.use('/api', routes);
 
 // 4. Mascotas
@@ -70,8 +75,10 @@ app.use('/api', departamentoRoutes);
 app.use('/api', municipioRoutes);
 app.use('/api', zonaRoutes);
 
-// 7. Usuarios (sin conflictos)
-app.use('/api', usuariosRoutes);
+app.use('/api', clienteRouter);
+app.use('/api', clienteActividadRouter);
+// Rutas de reportes
+app.use('/api', reportesRoutes);
 
 // ==================== MANEJO DE 404 ====================
 app.use((req, res) => {

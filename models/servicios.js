@@ -32,6 +32,35 @@ export const obtenerTodasLasSucursales = (callback) => {
   });
 };
 
+/*export const obtenerTodasLosHorariosCitas = (callback) => {
+  const query = `
+    SELECT 
+      s.id, 
+      s.nombre, 
+      s.direccion, 
+      s.telefono,
+      s.municipio_id,
+      m.nombre as municipio_nombre,
+      m.departamento_id,
+      d.nombre as departamento_nombre
+    FROM sucursal s
+    INNER JOIN municipio m ON s.municipio_id = m.id
+    INNER JOIN departamento d ON m.departamento_id = d.id
+    ORDER BY d.nombre, m.nombre, s.nombre
+  `;
+  
+  console.log('📋 Ejecutando query: obtener todas las sucursales');
+  
+  db.query(query, (error, resultados) => {
+    if (error) {
+      console.error('❌ Error en obtenerTodasLasSucursales:', error);
+      return callback(error, null);
+    }
+    console.log(`✅ ${resultados.length} sucursales obtenidas`);
+    callback(null, resultados);
+  });
+};*/
+
 export const obtenerSucursalesPorDepartamento = (departamentoId, callback) => {
   const query = `
     SELECT 

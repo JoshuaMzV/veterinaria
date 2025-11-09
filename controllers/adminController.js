@@ -156,8 +156,7 @@ export const obtenerTopClientes = (req, res) => {
       MAX(c.fecha) as ultima_cita,
       MIN(c.fecha) as primera_cita
     FROM usuarios u
-    INNER JOIN cliente cl ON u.id = cl.usuario_id
-    LEFT JOIN cita c ON cl.id = c.cliente_id
+    LEFT JOIN cita c ON u.id = c.cliente_id
     WHERE u.rol = 'cliente'
     GROUP BY u.id, u.nombre, u.email, u.telefono
     HAVING total_citas > 0
@@ -228,8 +227,7 @@ export const obtenerActividadReciente = (req, res) => {
         ELSE DATE_FORMAT(c.fecha, '%d/%m/%Y')
       END as fecha_legible
     FROM cita c
-    LEFT JOIN cliente cl ON c.cliente_id = cl.id
-    LEFT JOIN usuarios u ON cl.usuario_id = u.id
+    LEFT JOIN usuarios u ON c.cliente_id = u.id
     LEFT JOIN mascota m ON c.mascota_id = m.id
     LEFT JOIN servicio s ON c.servicio_id = s.id
     LEFT JOIN sucursal suc ON c.sucursal_id = suc.id
@@ -272,8 +270,7 @@ export const obtenerDashboardCompleto = (req, res) => {
         COUNT(c.id) as total_citas,
         SUM(CASE WHEN c.estado = 'completada' THEN 1 ELSE 0 END) as citas_completadas
       FROM usuarios u
-      INNER JOIN cliente cl ON u.id = cl.usuario_id
-      LEFT JOIN cita c ON cl.id = c.cliente_id
+      LEFT JOIN cita c ON u.id = c.cliente_id
       WHERE u.rol = 'cliente'
       GROUP BY u.id, u.nombre, u.email
       HAVING total_citas > 0

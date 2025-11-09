@@ -3,9 +3,9 @@ import db from '../config/db.js';
 
 // Registrar actividad del usuario (antes cliente)
 export const registrarActividad = (req, res) => {
-  const { usuario_id } = req.body;
+  const { cliente_id } = req.body;
 
-  if (!usuario_id) {
+  if (!cliente_id) {
     return res.status(400).json({ error: 'ID de usuario requerido' });
   }
 
@@ -13,11 +13,11 @@ export const registrarActividad = (req, res) => {
 
   // Insertar actividad del día (ignorar si ya existe)
   const queryInsert = `
-    INSERT IGNORE INTO cliente_actividad (usuario_id, fecha_actividad, ultima_conexion)
+    INSERT IGNORE INTO cliente_actividad (cliente_id, fecha_actividad, ultima_conexion)
     VALUES (?, ?, NOW())
   `;
 
-  db.query(queryInsert, [usuario_id, fechaHoy], (err, result) => {
+  db.query(queryInsert, [cliente_id, fechaHoy], (err, result) => {
     if (err) {
       console.error('Error al registrar actividad:', err);
       return res.status(500).json({ error: 'Error al registrar actividad' });
@@ -27,15 +27,15 @@ export const registrarActividad = (req, res) => {
     const queryUpdate = `
       UPDATE cliente_actividad 
       SET ultima_conexion = NOW() 
-      WHERE usuario_id = ? AND fecha_actividad = ?
+      WHERE cliente_id = ? AND fecha_actividad = ?
     `;
 
-    db.query(queryUpdate, [usuario_id, fechaHoy], (updateErr) => {
+    db.query(queryUpdate, [cliente_id, fechaHoy], (updateErr) => {
       if (updateErr) {
         console.error('Error al actualizar última conexión:', updateErr);
       }
 
-      console.log('Actividad registrada/actualizada para usuario:', usuario_id);
+      console.log('Actividad registrada/actualizada para usuario:', cliente_id);
       res.json({ 
         message: 'Actividad registrada correctamente',
         fecha: fechaHoy
@@ -46,9 +46,9 @@ export const registrarActividad = (req, res) => {
 
 // Obtener días activos del usuario
 export const obtenerDiasActivos = (req, res) => {
-  const { usuario_id } = req.params;
+  const { cliente_id } = req.params;
 
-  if (!usuario_id) {
+  if (!cliente_id) {
     return res.status(400).json({ error: 'ID de usuario requerido' });
   }
 
@@ -58,10 +58,10 @@ export const obtenerDiasActivos = (req, res) => {
       MIN(fecha_actividad) as primera_actividad,
       MAX(ultima_conexion) as ultima_conexion
     FROM cliente_actividad 
-    WHERE usuario_id = ?
+    WHERE cliente_id = ?
   `;
 
-  db.query(query, [usuario_id], (err, results) => {
+  db.query(query, [cliente_id], (err, results) => {
     if (err) {
       console.error('Error al obtener días activos:', err);
       return res.status(500).json({ error: 'Error al obtener días activos' });
@@ -79,10 +79,10 @@ export const obtenerDiasActivos = (req, res) => {
 
 // Obtener historial de actividad del usuario
 export const obtenerHistorialActividad = (req, res) => {
-  const { usuario_id } = req.params;
+  const { cliente_id } = req.params;
   const { limite = 30 } = req.query; // Últimos 30 días por defecto
 
-  if (!usuario_id) {
+  if (!cliente_id) {
     return res.status(400).json({ error: 'ID de usuario requerido' });
   }
 
@@ -92,12 +92,12 @@ export const obtenerHistorialActividad = (req, res) => {
       ultima_conexion,
       DAYNAME(fecha_actividad) as dia_semana
     FROM cliente_actividad 
-    WHERE usuario_id = ? 
+    WHERE cliente_id = ? 
     ORDER BY fecha_actividad DESC 
     LIMIT ?
   `;
 
-  db.query(query, [usuario_id, parseInt(limite)], (err, results) => {
+  db.query(query, [cliente_id, parseInt(limite)], (err, results) => {
     if (err) {
       console.error('Error al obtener historial de actividad:', err);
       return res.status(500).json({ error: 'Error al obtener historial de actividad' });
@@ -109,9 +109,9 @@ export const obtenerHistorialActividad = (req, res) => {
 
 // Obtener estadísticas de actividad
 export const obtenerEstadisticasActividad = (req, res) => {
-  const { usuario_id } = req.params;
+  const { cliente_id } = req.params;
 
-  if (!usuario_id) {
+  if (!cliente_id) {
     return res.status(400).json({ error: 'ID de usuario requerido' });
   }
 
@@ -134,10 +134,10 @@ export const obtenerEstadisticasActividad = (req, res) => {
         END
       ) as activo_hoy
     FROM cliente_actividad 
-    WHERE usuario_id = ?
+    WHERE cliente_id = ?
   `;
 
-  db.query(query, [usuario_id], (err, results) => {
+  db.query(query, [cliente_id], (err, results) => {
     if (err) {
       console.error('Error al obtener estadísticas de actividad:', err);
       return res.status(500).json({ error: 'Error al obtener estadísticas de actividad' });

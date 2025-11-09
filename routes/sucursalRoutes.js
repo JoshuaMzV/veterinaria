@@ -82,6 +82,26 @@ router.get('/sucursales', (req, res) => {
   }
 });
 
+// Obtener todas las Horarios Citas
+/*router.get('/sucursales/HorasCitas', (req, res) => {
+  try {
+    console.log('🏢 Obteniendo todas los Horarios Citas');
+    
+    obtenerTodasLosHorariosCitas((err, horariosCitas) => {
+      if (err) {
+        console.error('❌ Error:', err);
+        return res.status(500).json({ error: 'Error al obtener Horarios Citas' });
+      }
+      
+      console.log(`✅ ${horariosCitas.length} Horarios Citas encontradas`);
+      res.status(200).json(horariosCitas);
+    });
+  } catch (error) {
+    console.error('❌ Error general:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});*/
+
 // Obtener sucursal por ID (ÚLTIMO - ruta dinámica)
 router.get('/sucursales/:id', (req, res) => {
   try {

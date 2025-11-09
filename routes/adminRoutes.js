@@ -4,6 +4,7 @@ import db from '../config/db.js';
 
 const router = express.Router();
 
+// I
 // ==================== MIDDLEWARE DE DEBUG ====================
 router.use((req, res, next) => {
   console.log(`[ADMIN] ${req.method} ${req.originalUrl}`);
@@ -119,7 +120,7 @@ router.get('/actividad-reciente', async (req, res) => {
         s.nombre as servicio_nombre,
         DATE_FORMAT(c.fecha, '%d/%m/%Y') as fecha_legible
       FROM cita c
-      LEFT JOIN usuarios u ON c.usuario_id = u.id
+      LEFT JOIN usuarios u ON c.cliente_id = u.id
       LEFT JOIN mascota m ON c.mascota_id = m.id
       LEFT JOIN servicio s ON c.servicio_id = s.id
       ORDER BY c.fecha DESC, c.hora DESC

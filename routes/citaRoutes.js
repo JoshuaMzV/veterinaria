@@ -10,7 +10,7 @@ import {
   obtenerEstadisticasCitas,
   obtenerCitasPorFecha,
   actualizarCitasPasadasManual,
-  actualizarCitasPasadasPorCliente 
+  actualizarCitasPasadasPorCliente
 } from '../controllers/citaController.js';
 
 const router = express.Router();
@@ -58,7 +58,7 @@ router.get('/test', (req, res) => {
 router.get('/estadisticas/:cliente_id', obtenerEstadisticasCitas);
 
 // Obtener citas por cliente
-router.get('/cliente/:cliente_id', obtenerCitasPorCliente);
+router.get('/cliente/:usuario_id', obtenerCitasPorCliente);
 
 // Obtener citas por fecha
 router.get('/fecha/:fecha', obtenerCitasPorFecha);

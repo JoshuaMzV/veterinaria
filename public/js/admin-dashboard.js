@@ -604,6 +604,14 @@ function configurarEventListeners() {
     cerrarSesionBtn.addEventListener('click', cerrarSesion);
   }
 
+  const btnMiPerfil = document.getElementById('btnMiPerfil');
+  if (btnMiPerfil) {
+    btnMiPerfil.addEventListener('click', (e) => {
+      e.preventDefault();
+      irAlPerfil();
+    });
+  }
+
   const btnActualizar = document.getElementById('btnActualizarCitas');
   if (btnActualizar) {
     btnActualizar.addEventListener('click', async (e) => {
@@ -1165,3 +1173,9 @@ window.addEventListener('beforeunload', () => {
     console.log('🧹 Limpieza: interval detenido');
   }
 });
+
+// ==================== NAVEGACIÓN ====================
+
+function irAlPerfil() {
+  window.location.href = '/admin-perfil.html';
+}

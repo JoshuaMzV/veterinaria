@@ -1,4 +1,4 @@
-// /models/cita.js - ACTUALIZADO PARA USAR usuario_id
+// /models/cita.js - ACTUALIZADO PARA USAR cliente_id
 import db from '../config/db.js';
 
 // Obtener todas las citas con información relacionada
@@ -20,7 +20,7 @@ export const obtenerCitas = (callback) => {
     LEFT JOIN mascota m ON c.mascota_id = m.id
     LEFT JOIN servicio s ON c.servicio_id = s.id
     LEFT JOIN sucursal suc ON c.sucursal_id = suc.id
-    LEFT JOIN usuarios u ON c.usuario_id = u.id
+    LEFT JOIN usuarios u ON c.cliente_id = u.id
     ORDER BY c.fecha DESC, c.hora DESC
   `;
   
@@ -49,7 +49,7 @@ export const obtenerCitasPorCliente = (usuario_id, callback) => {
     LEFT JOIN mascota m ON c.mascota_id = m.id
     LEFT JOIN servicio s ON c.servicio_id = s.id
     LEFT JOIN sucursal suc ON c.sucursal_id = suc.id
-    WHERE c.usuario_id = ?
+    WHERE c.cliente_id = ?
     ORDER BY c.fecha DESC, c.hora DESC
   `;
   
@@ -81,7 +81,7 @@ export const obtenerCitaPorId = (id, callback) => {
     LEFT JOIN mascota m ON c.mascota_id = m.id
     LEFT JOIN servicio s ON c.servicio_id = s.id
     LEFT JOIN sucursal suc ON c.sucursal_id = suc.id
-    LEFT JOIN usuarios u ON c.usuario_id = u.id
+    LEFT JOIN usuarios u ON c.cliente_id = u.id
     WHERE c.id = ?
   `;
   
@@ -96,7 +96,7 @@ export const obtenerCitaPorId = (id, callback) => {
 
 // Verificar que una mascota pertenece a un usuario
 export const verificarMascotaCliente = (mascota_id, usuario_id, callback) => {
-  const query = 'SELECT id FROM mascota WHERE id = ? AND usuario_id = ?';
+  const query = 'SELECT id FROM mascota WHERE id = ? AND cliente_id = ?';
   
   db.query(query, [mascota_id, usuario_id], (err, results) => {
     if (err) {
@@ -137,7 +137,7 @@ export const verificarSucursal = (sucursal_id, callback) => {
 export const crearCita = (datosCita, callback) => {
   const query = `
     INSERT INTO cita (
-      usuario_id, 
+      cliente_id, 
       mascota_id, 
       servicio_id, 
       sucursal_id,
@@ -248,7 +248,7 @@ export const obtenerCitasPorFecha = (fecha, callback) => {
     LEFT JOIN mascota m ON c.mascota_id = m.id
     LEFT JOIN servicio s ON c.servicio_id = s.id
     LEFT JOIN sucursal suc ON c.sucursal_id = suc.id
-    LEFT JOIN usuarios u ON c.usuario_id = u.id
+    LEFT JOIN usuarios u ON c.cliente_id = u.id
     WHERE c.fecha = ?
     ORDER BY c.hora ASC
   `;
@@ -270,7 +270,7 @@ export const obtenerEstadisticasPorCliente = (usuario_id, callback) => {
       COUNT(*) as cantidad,
       DATE(fecha) as fecha_grupo
     FROM cita 
-    WHERE usuario_id = ?
+    WHERE cliente_id = ?
     GROUP BY estado, DATE(fecha)
     ORDER BY fecha_grupo DESC
   `;
@@ -317,7 +317,7 @@ export const obtenerProximasCitas = (usuario_id, limite = 5, callback) => {
     LEFT JOIN mascota m ON c.mascota_id = m.id
     LEFT JOIN servicio s ON c.servicio_id = s.id
     LEFT JOIN sucursal suc ON c.sucursal_id = suc.id
-    WHERE c.usuario_id = ? 
+    WHERE c.cliente_id = ? 
       AND c.fecha >= CURDATE() 
       AND c.estado IN ('pendiente', 'confirmada')
     ORDER BY c.fecha ASC, c.hora ASC
@@ -334,50 +334,13 @@ export const obtenerProximasCitas = (usuario_id, limite = 5, callback) => {
 };
 
 export const actualizarCitasPasadas = (callback) => {
-  const query = `
-    UPDATE cita 
-    SET estado = 'completada'
-    WHERE (
-      fecha < CURDATE() 
-      OR (fecha = CURDATE() AND hora < CURTIME())
-    )
-    AND estado IN ('pendiente', 'confirmada')
-  `;
-  
-  db.query(query, (err, result) => {
-    if (err) {
-      console.error('Error al actualizar citas pasadas:', err);
-      return callback(err);
-    }
-    
-    if (result.affectedRows > 0) {
-      console.log(`✅ ${result.affectedRows} cita(s) actualizada(s) a completada`);
-    }
-    callback(null, result);
-  });
+  // Esta función se desactiva para evitar conflictos con cambios manuales
+  // El estado de las citas debe ser controlado por el admin manualmente
+  if (callback) callback(null, { affectedRows: 0 });
 };
 
 export const actualizarCitasPasadasPorCliente = (usuario_id, callback) => {
-  const query = `
-    UPDATE cita 
-    SET estado = 'completada'
-    WHERE usuario_id = ?
-    AND (
-      fecha < CURDATE() 
-      OR (fecha = CURDATE() AND hora < CURTIME())
-    )
-    AND estado IN ('pendiente', 'confirmada')
-  `;
-  
-  db.query(query, [usuario_id], (err, result) => {
-    if (err) {
-      console.error(`Error al actualizar citas del usuario ${usuario_id}:`, err);
-      return callback(err);
-    }
-    
-    if (result.affectedRows > 0) {
-      console.log(`✅ ${result.affectedRows} cita(s) del usuario ${usuario_id} actualizada(s) a completada`);
-    }
-    callback(null, result);
-  });
+  // Esta función se desactiva para evitar conflictos con cambios manuales
+  // El estado de las citas debe ser controlado por el admin manualmente
+  if (callback) callback(null, { affectedRows: 0 });
 };

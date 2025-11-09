@@ -6,7 +6,9 @@ import {
   obtenerTodosUsuarios,
   obtenerUsuarioPorId,
   actualizarUsuario,
-  eliminarUsuario
+  eliminarUsuario,
+  obtenerPerfil,
+  actualizarPerfil
 } from '../controllers/usuariosController.js';
 
 const router = express.Router();
@@ -26,6 +28,11 @@ router.post('/registro', registrarUsuario);
 
 // Obtener todos los usuarios
 router.get('/usuarios', obtenerTodosUsuarios);
+
+// Obtener usuario por ID
+// PERFIL: obtener/actualizar el perfil del usuario autenticado (simple)
+router.get('/usuarios/perfil', obtenerPerfil);
+router.put('/usuarios/perfil', actualizarPerfil);
 
 // Obtener usuario por ID
 router.get('/usuarios/:id', obtenerUsuarioPorId);

@@ -44,7 +44,7 @@
               </div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
-              <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Mi Perfil</a></li>
+              <li><a class="dropdown-item" href="#" id="btnMiPerfil"><i class="bi bi-person me-2"></i>Mi Perfil</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item text-danger" href="#" id="cerrarSesionBtn"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</a></li>
             </ul>
@@ -259,6 +259,73 @@
   </div>
 
   <!-- Modal para ver detalles de cita -->
+  <!-- Modal para crear nueva cita -->
+  <div class="modal fade" id="modalNuevaCita" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="bi bi-plus-circle me-2"></i>
+            Nueva Cita
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formNuevaCita">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Cliente</label>
+                <select id="newClienteSelect" class="form-select">
+                  <option value="">Seleccionar cliente...</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Mascota</label>
+                <select id="newMascotaSelect" class="form-select">
+                  <option value="">Seleccionar mascota (opcional)</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Servicio</label>
+                <select id="newServicioSelect" class="form-select">
+                  <option value="">Seleccionar servicio...</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Sucursal</label>
+                <select id="newSucursalSelect" class="form-select">
+                  <option value="">Seleccionar sucursal...</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Fecha</label>
+                <input type="date" id="newFecha" class="form-control" required />
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Hora</label>
+                <input type="time" id="newHora" class="form-control" required />
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">Notas (opcional)</label>
+                <textarea id="newNotas" class="form-control" rows="3" placeholder="Observaciones, motivo, etc..."></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-success" id="btnCrearCita">
+            <i class="bi bi-plus-circle me-1"></i>Crear Cita
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="modal fade" id="modalDetalleCita" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">

@@ -255,7 +255,7 @@ async function handleCambiarPassword(e) {
     }
 
     try {
-        const response = await fetch(`/api/usuarios/${usuarioActual.id}/cambiar-password`, {
+        const response = await fetch(`/api/usuarios/${usuarioActual.id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'

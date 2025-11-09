@@ -5,6 +5,7 @@ let citasData = [];
 let mascotasData = [];
 let serviciosData = [];
 let sucursalesData = [];
+let horasCitasData = [];
 let clienteId = null;
 let usuarioActual = null;
 let citaEditando = null;
@@ -104,7 +105,7 @@ async function cargarClienteId() {
     if (!response.ok) throw new Error('Error al obtener clientes');
     
     const clientes = await response.json();
-    const cliente = clientes.find(c => c.usuario_id === usuarioActual.id);
+    const cliente = clientes.find(c => c.id === usuarioActual.id);
     
     if (cliente) {
       clienteId = cliente.id;
@@ -164,6 +165,20 @@ async function cargarSucursales() {
     
     sucursalesData = await response.json();
     actualizarSelectSucursales();
+
+  } catch (error) {
+    console.error('Error al cargar sucursales:', error);
+    mostrarError('Error al cargar las sucursales');
+  }
+}
+
+async function cargarHorariosCitas() {
+  try {
+    const response = await fetch(`/api/sucursales/HorasCitas`);
+    if (!response.ok) throw new Error('Error al obtener Horas Citas');
+    
+    horasCitasData = await response.json();
+    actualizarSelectHorasCitas();
 
   } catch (error) {
     console.error('Error al cargar sucursales:', error);
@@ -302,6 +317,17 @@ function actualizarSelectSucursales() {
     select.innerHTML += `<option value="${sucursal.id}">${sucursal.nombre} - ${sucursal.direccion}</option>`;
   });
 }
+
+/*function actualizarSelectHorasCitas() {
+  const select = document.getElementById('horaCita');
+  if (!select) return;
+  console.log(select);
+  select.innerHTML = '<option value="">Selecciona una sucursal</option>';
+  
+  sucursalesData.forEach(sucursal => {
+    select.innerHTML += `<option value="${sucursal.id}">${sucursal.nombre} - ${sucursal.direccion}</option>`;
+  });
+}*/
 
 function actualizarFiltroMascotas() {
   const select = document.getElementById('filtroMascota');
@@ -1010,12 +1036,42 @@ window.verDetalles = function(citaId) {
   modal.show();
 };
 
+// Helper robusto: intenta setear el valor, si no existe busca opción y la marca, si aún no existe la agrega.
+function setSelectValueRobusto(selectId, val) {
+  const sel = document.getElementById(selectId);
+  if (!sel) return;
+  // normalizar a string (HTML option values suelen ser strings)
+  const target = val === null || val === undefined ? '' : String(val);
+
+  // intento directo
+  sel.value = target;
+
+  // si no se aplicó (browser deja otro value), buscamos manualmente
+  if (String(sel.value) !== target) {
+    const opt = Array.from(sel.options).find(o => o.value === target || o.value === String(Number(target)));
+    if (opt) {
+      opt.selected = true;
+    } else {
+      // opcional: crear una option visible para el id inexistente (útil para depuración/UX)
+      const placeholder = document.createElement('option');
+      placeholder.value = target;
+      placeholder.textContent = `ID ${target} (no disponible)`;
+      placeholder.selected = true;
+      sel.appendChild(placeholder);
+      // aseguramos que el select muestre la nueva opción
+      sel.value = target;
+    }
+  }
+}
+
+
 window.editarCita = async function(citaId) {
   try {
     const response = await fetch(`/api/citas/${citaId}`);
     if (!response.ok) throw new Error('Error al obtener la cita');
     
     const cita = await response.json();
+    console.log(cita)
     
     if (!cita) {
       mostrarError('Cita no encontrada');
@@ -1050,6 +1106,59 @@ window.editarCita = async function(citaId) {
       const partesHora = cita.hora.split(':');
       horaFormateada = `${partesHora[0]}:${partesHora[1]}`;
     }
+
+    // dentro de window.editarCita, después de obtener `cita` y formatear fecha/hora:
+
+    // 1) aseguramos que los selects se actualicen (si tus funciones devuelven Promises las esperamos)
+    await actualizarSelectMascotas();
+    await actualizarSelectServicios();
+    await actualizarSelectSucursales(); // si es sync no hace falta await
+
+    // 2) aplicamos los valores de forma robusta — pero lo hacemos también cuando el modal esté mostrado
+    const aplicarValores = () => {
+      setSelectValueRobusto('mascotaSelect', cita.mascota_id);
+      setSelectValueRobusto('servicioSelect', cita.servicio_id);
+      setSelectValueRobusto('sucursalSelect', cita.sucursal_id || '');
+      document.getElementById('fechaCita').value = fechaFormateada || '';
+      document.getElementById('horaCita').value = horaFormateada || '';
+      document.getElementById('motivoConsulta').value = cita.motivo || '';
+      document.getElementById('observaciones').value = cita.observaciones || '';
+    };
+
+    // aplicarlo ahora (por si ya está listo)
+    aplicarValores();
+
+    // crear modal y aplicar también cuando esté completamente visible
+    const modalElement = document.getElementById('nuevaCitaModal');
+    //const modal = new bootstrap.Modal(modalElement);
+    const modal = new bootstrap.Modal(document.getElementById('nuevaCitaModal'));
+
+    const onShown = () => {
+      aplicarValores();
+      modalElement.removeEventListener('shown.bs.modal', onShown);
+    };
+    modalElement.addEventListener('shown.bs.modal', onShown);
+
+    //modal.show();
+
+    const botonSubmit = document.getElementById('btnAgendarCita');
+    botonSubmit.removeEventListener('click', agendarCita);
+    botonSubmit.innerHTML = '<i class="bi bi-check-circle me-1"></i>Actualizar Cita';
+    botonSubmit.onclick = actualizarCitaEditada;
+    
+    modal.show();
+    
+    document.getElementById('nuevaCitaModal').addEventListener('hidden.bs.modal', function handler() {
+      restaurarModalNuevaCita();
+      document.getElementById('nuevaCitaModal').removeEventListener('hidden.bs.modal', handler);
+    });
+    /*await actualizarSelectMascotas();
+    await actualizarSelectServicios(), actualizarSelectSucursales();
+
+    console.log('mascotasData:', mascotasData);
+    console.log('valor a seleccionar (mascota):', cita.mascota_id);
+    console.log('options mascota:', Array.from(document.getElementById('mascotaSelect').options).map(o => o.value));
+
     
     document.getElementById('mascotaSelect').value = cita.mascota_id;
     document.getElementById('servicioSelect').value = cita.servicio_id;
@@ -1069,7 +1178,7 @@ window.editarCita = async function(citaId) {
     document.getElementById('nuevaCitaModal').addEventListener('hidden.bs.modal', function handler() {
       restaurarModalNuevaCita();
       document.getElementById('nuevaCitaModal').removeEventListener('hidden.bs.modal', handler);
-    });
+    });*/
     
   } catch (error) {
     console.error('Error al cargar cita para editar:', error);
@@ -1087,9 +1196,13 @@ async function actualizarCitaEditada() {
       return;
     }
     
+    const mascotaId = document.getElementById('mascotaSelect').value;
+    const servicioId = document.getElementById('servicioSelect').value;
     const sucursalId = document.getElementById('sucursalSelect').value;
     const fecha = document.getElementById('fechaCita').value;
     const hora = document.getElementById('horaCita').value;
+    const motivo = document.getElementById('motivoConsulta').value.trim();
+    const observaciones = document.getElementById('observaciones').value.trim();
     
     const btnActualizar = document.getElementById('btnAgendarCita');
     const btnTextOriginal = btnActualizar.innerHTML;
@@ -1098,9 +1211,15 @@ async function actualizarCitaEditada() {
 
     const datosActualizar = {
       fecha: fecha,
-      hora: hora,
-      sucursal_id: parseInt(sucursalId)
+      hora: hora+":00",
+      estado: citaEditando.estado,
+      sucursal_id: parseInt(sucursalId),
+      servicio_id: parseInt(servicioId),
+      motivo: motivo,
+      observaciones: observaciones
     };
+
+    console.log(datosActualizar);
 
     const response = await fetch(`/api/citas/${citaEditando.id}`, {
       method: 'PUT',

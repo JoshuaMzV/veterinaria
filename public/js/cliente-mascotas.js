@@ -87,7 +87,7 @@ async function cargarClienteId() {
     const clientes = await response.json();
     console.log('Clientes obtenidos:', clientes);
     
-    const cliente = clientes.find(c => c.usuario_id === usuarioActual.id);
+    const cliente = clientes.find(c => c.id === usuarioActual.id);
     console.log('Cliente encontrado:', cliente);
     
     if (cliente) {

@@ -111,7 +111,7 @@ console.log('===============================================\n');
     // Mostrar citas en el tab activo
     mostrarCitasPorTab('todas');
 
-    actualizarHora();
+    actualizarHoraActualizacion();
     console.log('✅ Citas cargadas exitosamente');
     
   } catch (error) {
@@ -514,6 +514,20 @@ window.verDetalleCita = async function(id) {
     const modal = new bootstrap.Modal(document.getElementById('modalDetalleCita'));
     modal.show();
 
+    // Deshabilitar botón Cancelar si la cita está completada o cancelada
+    const btnCancelarCita = document.getElementById('btnCancelarCita');
+    if (btnCancelarCita) {
+      if (cita.estado === 'completada' || cita.estado === 'cancelada') {
+        btnCancelarCita.disabled = true;
+        btnCancelarCita.title = `No se puede cancelar una cita ${cita.estado}`;
+        btnCancelarCita.classList.add('opacity-50');
+      } else {
+        btnCancelarCita.disabled = false;
+        btnCancelarCita.title = '';
+        btnCancelarCita.classList.remove('opacity-50');
+      }
+    }
+
   } catch (error) {
     console.error('❌ Error al ver detalles:', error);
     mostrarError('Error al cargar los detalles de la cita');
@@ -556,10 +570,11 @@ async function guardarEstadoCita() {
 
     const response = await fetch(`/api/citas/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-Admin': '1' },
       body: JSON.stringify({
         estado: nuevoEstado,
-        notas: notas || undefined
+        notas: notas || undefined,
+        force: true
       })
     });
 
@@ -650,6 +665,15 @@ function configurarEventListeners() {
     cerrarSesionBtn.addEventListener('click', cerrarSesion);
   }
 
+  // Mi Perfil
+  const btnMiPerfil = document.getElementById('btnMiPerfil');
+  if (btnMiPerfil) {
+    btnMiPerfil.addEventListener('click', (e) => {
+      e.preventDefault();
+      irAlPerfil();
+    });
+  }
+
   // Actualizar citas
   const btnActualizar = document.getElementById('btnActualizarCitas');
   if (btnActualizar) {
@@ -721,42 +745,12 @@ function configurarEventListeners() {
   console.log('✅ Event listeners configurados');
 }
 
-function cerrarSesion(e) {
-  e.preventDefault();
-  
-  if (confirm('¿Está seguro de cerrar sesión?')) {
-    sessionStorage.clear();
-    window.location.href = '/';
-  }
-}
-
-// ==================== UTILIDADES ====================
-
-function mostrarCargando() {
-  const containers = [
-    'todasCitasContainer',
-    'hoyCitasContainer',
-    'proximasCitasContainer',
-    'anterioresCitasContainer'
-  ];
-
-  containers.forEach(id => {
-    const container = document.getElementById(id);
-    if (container) {
-      container.innerHTML = `
-        <div class="text-center py-5">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Cargando...</span>
-          </div>
-        </div>
-      `;
-    }
+function actualizarHoraActualizacion() {
+  const hora = new Date().toLocaleString('es-GT', { 
+    hour: '2-digit', 
+    minute: '2-digit', 
+    second: '2-digit' 
   });
-}
-
-function actualizarHora() {
-  const ahora = new Date();
-  const hora = ahora.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
   
   const elemento = document.getElementById('horaActualizacion');
   if (elemento) {
@@ -822,6 +816,45 @@ function iniciarActualizacionAutomatica() {
 
   console.log('✅ Actualización automática iniciada');
 }
+
+// ==================== FUNCIONES DE UI ====================
+
+function mostrarCargando() {
+  const contenedor = document.getElementById('citasTableBody');
+  if (contenedor) {
+    contenedor.innerHTML = `
+      <tr>
+        <td colspan="8" class="text-center">
+          <div class="spinner-border spinner-border-sm me-2" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          Cargando citas...
+        </td>
+      </tr>
+    `;
+  }
+}
+
+function ocultarCargando() {
+  const contenedor = document.getElementById('citasTableBody');
+  if (contenedor && contenedor.innerHTML.includes('spinner-border')) {
+    contenedor.innerHTML = '';
+  }
+}
+
+// ==================== SESIÓN ====================
+
+async function cerrarSesion() {
+  sessionStorage.removeItem('usuario');
+  sessionStorage.removeItem('autenticado');
+  window.location.href = '/login.html';
+}
+
+function irAlPerfil() {
+  window.location.href = '/admin-perfil.html';
+}
+
+// ==================== ACTUALIZACIÓN AUTOMÁTICA ====================
 
 // ==================== LIMPIEZA ====================
 
