@@ -72,7 +72,7 @@ export const crearMascota = (datosMascota, callback) => {
   const query = `
     INSERT INTO mascota (
       nombre, raza, edad, peso, observaciones,
-      usuario_id, tipo_mascota_id, imagen,
+      cliente_id, tipo_mascota_id, imagen,
       fecha_nacimiento, color, genero, estado_salud,
       microchip, especie
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -84,7 +84,7 @@ export const crearMascota = (datosMascota, callback) => {
     datosMascota.edad || null,
     datosMascota.peso || null,
     datosMascota.observaciones || null,
-    datosMascota.usuario_id, // ← Cambio de cliente_id a usuario_id
+    datosMascota.cliente_id, // ← Cambio de cliente_id a usuario_id
     datosMascota.tipo_mascota_id || null,
     datosMascota.imagen || null,
     datosMascota.fecha_nacimiento || null,
@@ -252,4 +252,4 @@ export const obtenerTodasLasMascotas = (callback) => {
     console.log('Total de mascotas encontradas:', result.length);
     callback(null, result);
   });
-};  
+};

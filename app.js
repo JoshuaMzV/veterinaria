@@ -57,11 +57,17 @@ app.get('/', (req, res) => {
 // ==================== API ROUTES ====================
 // ORDEN CRÍTICO: Rutas más específicas PRIMERO, genéricas ÚLTIMO
 
+console.log('📝 Registrando rutas...');
 app.use('/api/admin', adminRoutes);
+console.log('✅ Rutas admin registradas');
+
 // 1. Usuarios (muy específica con /usuarios/perfil)
 app.use('/api', usuariosRoutes);
+console.log('✅ Rutas usuarios registradas (incluye /api/login POST)');
+
 // 2. Administración (más específica)
 app.use('/api', routes);
+console.log('✅ Rutas index registradas');
 
 // 4. Mascotas
 app.use('/api', mascotaRoutes);

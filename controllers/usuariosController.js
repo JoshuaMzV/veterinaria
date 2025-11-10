@@ -51,38 +51,53 @@ export const loginUsuario = (req, res) => {
         return res.status(401).json({ error: 'Correo electrónico o contraseña incorrectos' });
       }
 
-      console.log('Login exitoso para usuario:', usuario.email, 'con rol:', usuario.rol);
+      console.log('✅ Login exitoso para usuario:', usuario.email);
+      console.log('📋 Rol recuperado de BD:', usuario.rol);
+      console.log('📋 Rol tipo:', typeof usuario.rol);
+      console.log('📋 Usuario completo:', JSON.stringify(usuario));
 
       // Determinar la página de redirección basada en el rol
       let redirectUrl = '/dashboard.html';
+      const rolLower = (usuario.rol || '').toLowerCase().trim();
       
-      switch (usuario.rol.toLowerCase()) {
+      console.log('🔄 Rol normalizado para switch:', rolLower);
+      
+      switch (rolLower) {
         case 'cliente':
           redirectUrl = '/cliente-dashboard.html';
+          console.log('➡️ Cliente detectado');
           break;
         case 'vendedor':
           redirectUrl = '/vendedor-dashboard.html';
+          console.log('➡️ Vendedor detectado');
           break;
         case 'admin':
           redirectUrl = '/admin-dashboard.html';
+          console.log('➡️ Admin detectado');
           break;
         default:
           redirectUrl = '/dashboard.html';
+          console.log('⚠️ Rol desconocido:', usuario.rol);
       }
 
-      console.log('Redirigiendo a:', redirectUrl);
+      console.log('📍 Redirigiendo a:', redirectUrl);
 
       // Responder con la información del usuario y su rol
-      res.status(200).json({
+      const response = {
         message: 'Inicio de sesión exitoso',
         usuario: {
           id: usuario.id,
           nombre: usuario.nombre,
           email: usuario.email,
           rol: usuario.rol,
+          telefono: usuario.telefono || null,
+          direccion: usuario.direccion || null
         },
         redirectUrl: redirectUrl
-      });
+      };
+      
+      console.log('📤 Enviando respuesta:', JSON.stringify(response));
+      res.status(200).json(response);
     });
     
   } catch (error) {

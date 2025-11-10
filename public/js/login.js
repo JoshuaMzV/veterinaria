@@ -100,15 +100,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
       if (response.ok) {
         // Login exitoso
+        console.log('✅ Response OK');
+        console.log('📥 Datos recibidos:', data);
+        console.log('📥 Usuario:', data.usuario);
+        console.log('📥 Rol:', data.usuario?.rol);
+        
         showSuccess(`¡Bienvenido ${data.usuario.nombre}! Redirigiendo...`);
         
         // Guardar información del usuario en sessionStorage
-        sessionStorage.setItem('usuario', JSON.stringify(data.usuario));
+        const usuarioJSON = JSON.stringify(data.usuario);
+        console.log('💾 Guardando en sessionStorage:', usuarioJSON);
+        sessionStorage.setItem('usuario', usuarioJSON);
         sessionStorage.setItem('isLoggedIn', 'true');
         
+        console.log('✅ SessionStorage actualizado');
+        console.log('🔄 Rol en sessionStorage:', sessionStorage.getItem('usuario'));
+        
         // Redirigir después de un breve delay
+        const redirectUrl = data.redirectUrl || '/dashboard.html';
+        console.log('📍 Redirigiendo a:', redirectUrl);
         setTimeout(() => {
-          window.location.href = data.redirectUrl || '/dashboard.html';
+          window.location.href = redirectUrl;
         }, 1500);
 
       } else {
@@ -194,13 +206,13 @@ document.addEventListener('DOMContentLoaded', function() {
       
       switch (usuario.rol.toLowerCase()) {
         case 'cliente':
-          redirectUrl = '../cliente-dashboard.html';
+          redirectUrl = '/cliente-dashboard.html';
           break;
         case 'vendedor':
-          redirectUrl = '../vendedor-dashboard.html';
+          redirectUrl = '/vendedor-dashboard.html';
           break;
         case 'admin':
-          redirectUrl = '../admin-dashboard.html';
+          redirectUrl = '/admin-dashboard.html';
           break;
       }
       

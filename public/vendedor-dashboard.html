@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Veterinaria Mascotico</title>
+  <title>Dashboard Vendedor - Veterinaria Mascotico</title>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Bootstrap Icons -->
@@ -41,33 +41,33 @@
             <div class="nav-item dropdown me-3">
               <a class="nav-link notification-bell" href="#" role="button" data-bs-toggle="dropdown">
                 <i class="bi bi-bell"></i>
-                <span class="notification-badge">3</span>
+                <span class="notification-badge" id="notificationCount">0</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-end notification-dropdown">
                 <li><h6 class="dropdown-header">Notificaciones</h6></li>
-                <li><a class="dropdown-item" href="#"><i class="bi bi-calendar-check me-2"></i>Cita programada para hoy</a></li>
-                <li><a class="dropdown-item" href="#"><i class="bi bi-exclamation-circle me-2"></i>Recordatorio de vacuna</a></li>
-                <li><a class="dropdown-item" href="#"><i class="bi bi-info-circle me-2"></i>Nuevo mensaje</a></li>
+                <li><a class="dropdown-item" href="#"><i class="bi bi-calendar-check me-2"></i>Citas programadas para hoy</a></li>
+                <li><a class="dropdown-item" href="#"><i class="bi bi-exclamation-circle me-2"></i>Clientes nuevos</a></li>
+                <li><a class="dropdown-item" href="#"><i class="bi bi-info-circle me-2"></i>Reportes disponibles</a></li>
               </ul>
             </div>
 
             <!-- Usuario -->
             <div class="nav-item dropdown">
-              <a class="nav-link user-profile" href="#" role="button" data-bs-toggle="dropdown">
+              <a class="nav-link user-profile" href="#" id="userDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <div class="user-avatar">
                   <i class="bi bi-person-circle"></i>
                 </div>
                 <div class="user-info">
-                  <span class="user-name">Usuario Ejemplo</span>
-                  <small class="user-role">Cliente</small>
+                  <span class="user-name" id="userName">Vendedor</span>
+                  <small class="user-role">Vendedor</small>
                 </div>
                 <i class="bi bi-chevron-down ms-2"></i>
               </a>
-              <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Mi Perfil</a></li>
+              <ul class="dropdown-menu dropdown-menu-end" id="userDropdownMenu">
+                <li><a class="dropdown-item" id="btnMiPerfil" href="#"><i class="bi bi-person me-2"></i>Mi Perfil</a></li>
                 <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Configuración</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</a></li>
+                <li><a class="dropdown-item text-danger" id="btnCerrarSesion" href="#"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</a></li>
               </ul>
             </div>
           </div>
@@ -87,45 +87,44 @@
             <h6 class="nav-section-title">Principal</h6>
             <ul class="nav-items">
               <li class="nav-item active">
-                <a href="#dashboard" class="nav-link">
+                <a href="vendedor-dashboard.html" class="nav-link">
                   <i class="bi bi-house-door"></i>
                   <span>Dashboard</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#citas" class="nav-link">
+                <a href="#" onclick="mostrarSeccion('citas')" class="nav-link">
                   <i class="bi bi-calendar-event"></i>
                   <span>Citas</span>
-                  <span class="badge">5</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#mascotas" class="nav-link">
-                  <i class="bi bi-heart"></i>
-                  <span>Mascotas</span>
+                <a href="#" onclick="mostrarSeccion('clientes')" class="nav-link">
+                  <i class="bi bi-people"></i>
+                  <span>Clientes</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" onclick="mostrarSeccion('servicios')" class="nav-link">
+                  <i class="bi bi-clipboard-pulse"></i>
+                  <span>Servicios</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" onclick="mostrarSeccion('sucursales')" class="nav-link">
+                  <i class="bi bi-building"></i>
+                  <span>Sucursales</span>
                 </a>
               </li>
             </ul>
           </div>
 
           <div class="nav-section">
-            <h6 class="nav-section-title">Gestión</h6>
+            <h6 class="nav-section-title">Reporte</h6>
             <ul class="nav-items">
               <li class="nav-item">
-                <a href="#servicios" class="nav-link">
-                  <i class="bi bi-clipboard-pulse"></i>
-                  <span>Servicios</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="#historial" class="nav-link">
-                  <i class="bi bi-file-medical"></i>
-                  <span>Historial Médico</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="#reportes" class="nav-link">
-                  <i class="bi bi-graph-up"></i>
+                <a href="#" onclick="mostrarSeccion('reportes')" class="nav-link">
+                  <i class="bi bi-bar-chart"></i>
                   <span>Reportes</span>
                 </a>
               </li>
@@ -136,32 +135,14 @@
             <h6 class="nav-section-title">Configuración</h6>
             <ul class="nav-items">
               <li class="nav-item">
-                <a href="#perfil" class="nav-link">
+                <a href="vendedor-perfil.html" class="nav-link">
                   <i class="bi bi-person-gear"></i>
                   <span>Mi Perfil</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="#ayuda" class="nav-link">
-                  <i class="bi bi-question-circle"></i>
-                  <span>Ayuda</span>
                 </a>
               </li>
             </ul>
           </div>
         </nav>
-
-        <!-- Widget de resumen -->
-        <div class="sidebar-widget">
-          <div class="widget-header">
-            <i class="bi bi-calendar-check"></i>
-            <h6>Próxima Cita</h6>
-          </div>
-          <div class="widget-content">
-            <p class="mb-1"><strong>Consulta General</strong></p>
-            <small class="text-muted">Mañana a las 10:00 AM</small>
-          </div>
-        </div>
       </div>
     </aside>
 
@@ -172,13 +153,7 @@
         <div class="row align-items-center">
           <div class="col-md-8">
             <h1 class="welcome-title">¡Bienvenido de vuelta!</h1>
-            <p class="welcome-subtitle">Aquí tienes un resumen de la actividad reciente</p>
-          </div>
-          <div class="col-md-4 text-end">
-            <div class="welcome-stats">
-              <span class="stat-number">12</span>
-              <span class="stat-label">Días activo</span>
-            </div>
+            <p class="welcome-subtitle">Resumen de ventas y actividades del día</p>
           </div>
         </div>
       </div>
@@ -192,20 +167,20 @@
                 <i class="bi bi-calendar-check"></i>
               </div>
               <div class="stat-content">
-                <h3>8</h3>
-                <p>Citas Programadas</p>
-                <small class="stat-change positive">+12% vs mes anterior</small>
+                <h3 id="citasHoy">0</h3>
+                <p>Citas Hoy</p>
+                <small class="stat-change positive">+5% vs semana anterior</small>
               </div>
             </div>
           </div>
           <div class="col-xl-3 col-md-6">
             <div class="stat-card">
               <div class="stat-icon success">
-                <i class="bi bi-heart-pulse"></i>
+                <i class="bi bi-people"></i>
               </div>
               <div class="stat-content">
-                <h3>3</h3>
-                <p>Mascotas Registradas</p>
+                <h3 id="totalClientes">0</h3>
+                <p>Total de Clientes</p>
                 <small class="stat-change neutral">Sin cambios</small>
               </div>
             </div>
@@ -213,24 +188,24 @@
           <div class="col-xl-3 col-md-6">
             <div class="stat-card">
               <div class="stat-icon warning">
-                <i class="bi bi-exclamation-triangle"></i>
+                <i class="bi bi-clipboard-pulse"></i>
               </div>
               <div class="stat-content">
-                <h3>2</h3>
-                <p>Recordatorios Pendientes</p>
-                <small class="stat-change negative">Requiere atención</small>
+                <h3 id="totalServicios">0</h3>
+                <p>Servicios Disponibles</p>
+                <small class="stat-change positive">Actualizados</small>
               </div>
             </div>
           </div>
           <div class="col-xl-3 col-md-6">
             <div class="stat-card">
               <div class="stat-icon info">
-                <i class="bi bi-clipboard-data"></i>
+                <i class="bi bi-building"></i>
               </div>
               <div class="stat-content">
-                <h3>15</h3>
-                <p>Consultas Realizadas</p>
-                <small class="stat-change positive">+8% vs mes anterior</small>
+                <h3 id="totalSucursales">0</h3>
+                <p>Sucursales</p>
+                <small class="stat-change neutral">En operación</small>
               </div>
             </div>
           </div>
@@ -238,100 +213,67 @@
       </div>
 
       <!-- Tab Content Area -->
-      <div class="content-tabs-section">
+      <div class="content-tabs-section" id="dashboardTabs">
         <!-- Tabs Navigation -->
-        <ul class="nav nav-tabs custom-tabs" id="dashboardTabs" role="tablist">
+        <ul class="nav nav-tabs custom-tabs" role="tablist">
           <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
-              <i class="bi bi-house-door me-2"></i>Resumen General
+            <button class="nav-link active" id="inicio-tab" data-bs-toggle="tab" data-bs-target="#inicio" type="button" role="tab">
+              <i class="bi bi-house-door me-2"></i>Inicio
             </button>
           </li>
           <li class="nav-item" role="presentation">
-            <button class="nav-link" id="appointments-tab" data-bs-toggle="tab" data-bs-target="#appointments" type="button" role="tab">
-              <i class="bi bi-calendar-event me-2"></i>Mis Citas
+            <button class="nav-link" id="citas-tab" data-bs-toggle="tab" data-bs-target="#citas" type="button" role="tab">
+              <i class="bi bi-calendar-event me-2"></i>Citas
             </button>
           </li>
           <li class="nav-item" role="presentation">
-            <button class="nav-link" id="pets-tab" data-bs-toggle="tab" data-bs-target="#pets" type="button" role="tab">
-              <i class="bi bi-heart me-2"></i>Mis Mascotas
+            <button class="nav-link" id="clientes-tab" data-bs-toggle="tab" data-bs-target="#clientes" type="button" role="tab">
+              <i class="bi bi-people me-2"></i>Clientes
             </button>
           </li>
           <li class="nav-item" role="presentation">
-            <button class="nav-link" id="services-tab" data-bs-toggle="tab" data-bs-target="#services" type="button" role="tab">
+            <button class="nav-link" id="servicios-tab" data-bs-toggle="tab" data-bs-target="#servicios" type="button" role="tab">
               <i class="bi bi-clipboard-pulse me-2"></i>Servicios
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="sucursales-tab" data-bs-toggle="tab" data-bs-target="#sucursales" type="button" role="tab">
+              <i class="bi bi-building me-2"></i>Sucursales
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="reportes-tab" data-bs-toggle="tab" data-bs-target="#reportes" type="button" role="tab">
+              <i class="bi bi-bar-chart me-2"></i>Reportes
             </button>
           </li>
         </ul>
 
         <!-- Tab Content -->
-        <div class="tab-content custom-tab-content" id="dashboardTabsContent">
-          <!-- Overview Tab -->
-          <div class="tab-pane fade show active" id="overview" role="tabpanel">
+        <div class="tab-content custom-tab-content">
+          <!-- Inicio Tab -->
+          <div class="tab-pane fade show active" id="inicio" role="tabpanel">
             <div class="row g-4">
-              <!-- Actividad Reciente -->
               <div class="col-lg-8">
                 <div class="content-card">
                   <div class="card-header">
-                    <h5><i class="bi bi-clock-history me-2"></i>Actividad Reciente</h5>
+                    <h5><i class="bi bi-calendar-check me-2"></i>Próximas Citas</h5>
                   </div>
                   <div class="card-body">
-                    <div class="activity-list">
-                      <div class="activity-item">
-                        <div class="activity-icon success">
-                          <i class="bi bi-check-circle"></i>
-                        </div>
-                        <div class="activity-content">
-                          <p><strong>Cita completada</strong> - Consulta general para Max</p>
-                          <small class="text-muted">Hace 2 horas</small>
-                        </div>
-                      </div>
-                      <div class="activity-item">
-                        <div class="activity-icon primary">
-                          <i class="bi bi-calendar-plus"></i>
-                        </div>
-                        <div class="activity-content">
-                          <p><strong>Nueva cita programada</strong> - Vacunación para Luna</p>
-                          <small class="text-muted">Ayer a las 3:30 PM</small>
-                        </div>
-                      </div>
-                      <div class="activity-item">
-                        <div class="activity-icon warning">
-                          <i class="bi bi-bell"></i>
-                        </div>
-                        <div class="activity-content">
-                          <p><strong>Recordatorio</strong> - Próxima vacuna para Toby</p>
-                          <small class="text-muted">Hace 3 días</small>
-                        </div>
-                      </div>
+                    <div id="citasProximas" class="activity-list">
+                      <p class="text-muted">Cargando...</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Quick Actions -->
               <div class="col-lg-4">
                 <div class="content-card">
                   <div class="card-header">
-                    <h5><i class="bi bi-lightning me-2"></i>Acciones Rápidas</h5>
+                    <h5><i class="bi bi-check-circle me-2"></i>Completadas Hoy</h5>
                   </div>
                   <div class="card-body">
-                    <div class="quick-actions">
-                      <a href="#" class="quick-action-btn primary">
-                        <i class="bi bi-calendar-plus"></i>
-                        <span>Agendar Cita</span>
-                      </a>
-                      <a href="#" class="quick-action-btn success">
-                        <i class="bi bi-heart-pulse"></i>
-                        <span>Ver Mascotas</span>
-                      </a>
-                      <a href="#" class="quick-action-btn info">
-                        <i class="bi bi-file-medical"></i>
-                        <span>Historial Médico</span>
-                      </a>
-                      <a href="#" class="quick-action-btn warning">
-                        <i class="bi bi-telephone"></i>
-                        <span>Contactar Clínica</span>
-                      </a>
+                    <div id="citasCompletadas" class="activity-list">
+                      <p class="text-muted">Cargando...</p>
                     </div>
                   </div>
                 </div>
@@ -339,53 +281,142 @@
             </div>
           </div>
 
-          <!-- Appointments Tab -->
-          <div class="tab-pane fade" id="appointments" role="tabpanel">
+          <!-- Citas Tab -->
+          <div class="tab-pane fade" id="citas" role="tabpanel">
             <div class="content-card">
-              <div class="card-header d-flex justify-content-between align-items-center">
-                <h5><i class="bi bi-calendar-event me-2"></i>Mis Citas</h5>
-                <button class="btn btn-primary btn-sm">
-                  <i class="bi bi-plus me-1"></i>Nueva Cita
-                </button>
+              <div class="card-header">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <h5><i class="bi bi-calendar-event me-2"></i>Todas las Citas</h5>
+                  </div>
+                  <div class="col-auto">
+                    <input type="date" class="form-control form-control-sm" id="filtroFecha">
+                  </div>
+                </div>
               </div>
               <div class="card-body">
-                <p class="text-muted text-center py-4">
-                  <i class="bi bi-calendar-x display-1 text-muted mb-3"></i><br>
-                  Aquí aparecerán tus citas programadas
-                </p>
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Cliente</th>
+                        <th>Mascota</th>
+                        <th>Servicio</th>
+                        <th>Sucursal</th>
+                        <th>Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody id="citasBody">
+                      <tr><td colspan="7" class="text-center">Cargando...</td></tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Pets Tab -->
-          <div class="tab-pane fade" id="pets" role="tabpanel">
+          <!-- Clientes Tab -->
+          <div class="tab-pane fade" id="clientes" role="tabpanel">
             <div class="content-card">
-              <div class="card-header d-flex justify-content-between align-items-center">
-                <h5><i class="bi bi-heart me-2"></i>Mis Mascotas</h5>
-                <button class="btn btn-success btn-sm">
-                  <i class="bi bi-plus me-1"></i>Registrar Mascota
-                </button>
+              <div class="card-header">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <h5><i class="bi bi-people me-2"></i>Clientes</h5>
+                  </div>
+                  <div class="col-auto">
+                    <input type="text" class="form-control form-control-sm" placeholder="Buscar cliente..." id="buscadorClientes">
+                  </div>
+                </div>
               </div>
               <div class="card-body">
-                <p class="text-muted text-center py-4">
-                  <i class="bi bi-heart display-1 text-muted mb-3"></i><br>
-                  Aquí aparecerán tus mascotas registradas
-                </p>
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Mascotas</th>
+                        <th>Citas</th>
+                      </tr>
+                    </thead>
+                    <tbody id="clientesBody">
+                      <tr><td colspan="6" class="text-center">Cargando...</td></tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Services Tab -->
-          <div class="tab-pane fade" id="services" role="tabpanel">
+          <!-- Servicios Tab -->
+          <div class="tab-pane fade" id="servicios" role="tabpanel">
             <div class="content-card">
               <div class="card-header">
                 <h5><i class="bi bi-clipboard-pulse me-2"></i>Servicios Disponibles</h5>
               </div>
               <div class="card-body">
-                <p class="text-muted text-center py-4">
-                  <i class="bi bi-clipboard-pulse display-1 text-muted mb-3"></i><br>
-                  Aquí aparecerán los servicios disponibles
-                </p>
+                <div class="row" id="serviciosContainer">
+                  <p class="text-muted">Cargando...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sucursales Tab -->
+          <div class="tab-pane fade" id="sucursales" role="tabpanel">
+            <div class="content-card">
+              <div class="card-header">
+                <h5><i class="bi bi-building me-2"></i>Sucursales</h5>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Dirección</th>
+                        <th>Teléfono</th>
+                        <th>Ciudad</th>
+                      </tr>
+                    </thead>
+                    <tbody id="sucursalesBody">
+                      <tr><td colspan="5" class="text-center">Cargando...</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reportes Tab -->
+          <div class="tab-pane fade" id="reportes" role="tabpanel">
+            <div class="row g-4">
+              <div class="col-lg-6">
+                <div class="content-card">
+                  <div class="card-header">
+                    <h5><i class="bi bi-pie-chart me-2"></i>Estado de Citas (Hoy)</h5>
+                  </div>
+                  <div class="card-body">
+                    <div id="reporteCitasEstado">
+                      <p class="text-muted">Cargando...</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="content-card">
+                  <div class="card-header">
+                    <h5><i class="bi bi-info-circle me-2"></i>Información</h5>
+                  </div>
+                  <div class="card-body">
+                    <p>Panel de reportes del vendedor. Aquí puedes ver estadísticas de tu actividad.</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -396,5 +427,246 @@
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/vendedor-dashboard.js"></script>
+</body>
+</html>
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-tabs mb-4" id="dashboardTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="inicio-tab" onclick="mostrarSeccion('inicio')" type="button">
+          <i class="bi bi-house-door me-2"></i>Inicio
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="citas-tab" onclick="mostrarSeccion('citas')" type="button">
+          <i class="bi bi-calendar-event me-2"></i>Citas del Sistema
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="clientes-tab" onclick="mostrarSeccion('clientes')" type="button">
+          <i class="bi bi-people me-2"></i>Clientes
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="servicios-tab" onclick="mostrarSeccion('servicios')" type="button">
+          <i class="bi bi-clipboard-pulse me-2"></i>Servicios
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="sucursales-tab" onclick="mostrarSeccion('sucursales')" type="button">
+          <i class="bi bi-building me-2"></i>Sucursales
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="reportes-tab" onclick="mostrarSeccion('reportes')" type="button">
+          <i class="bi bi-graph-up me-2"></i>Reportes
+        </button>
+      </li>
+    </ul>
+
+    <!-- INICIO SECTION -->
+    <div id="seccion-inicio" class="seccion-contenido">
+      <div class="row mb-4">
+        <div class="col-md-12">
+          <h2 class="mb-4"><i class="bi bi-speedometer2"></i> Panel General del Sistema</h2>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-md-3">
+          <div class="card stat-card">
+            <div class="card-body text-center">
+              <i class="bi bi-calendar-event display-4 text-primary mb-2"></i>
+              <h5 class="card-title">Citas Hoy</h5>
+              <h3 id="citasHoy">0</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stat-card">
+            <div class="card-body text-center">
+              <i class="bi bi-people display-4 text-success mb-2"></i>
+              <h5 class="card-title">Total de Clientes</h5>
+              <h3 id="totalClientes">0</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stat-card">
+            <div class="card-body text-center">
+              <i class="bi bi-clipboard-pulse display-4 text-info mb-2"></i>
+              <h5 class="card-title">Servicios Disponibles</h5>
+              <h3 id="totalServicios">0</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stat-card">
+            <div class="card-body text-center">
+              <i class="bi bi-building display-4 text-warning mb-2"></i>
+              <h5 class="card-title">Sucursales Activas</h5>
+              <h3 id="totalSucursales">0</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0"><i class="bi bi-clock-history"></i> Próximas 5 Citas</h5>
+            </div>
+            <div class="card-body">
+              <div id="citasProximas" class="list-group list-group-flush">
+                <p class="text-muted text-center py-3">Cargando...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header bg-success text-white">
+              <h5 class="mb-0"><i class="bi bi-calendar-check"></i> Citas Completadas Hoy</h5>
+            </div>
+            <div class="card-body">
+              <div id="citasCompletadas" class="list-group list-group-flush">
+                <p class="text-muted text-center py-3">Cargando...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CITAS SECTION -->
+    <div id="seccion-citas" class="seccion-contenido" style="display:none;">
+      <h2 class="mb-4"><i class="bi bi-calendar-event"></i> Todas las Citas del Sistema</h2>
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Listado de Citas</h5>
+          <input type="date" id="filtroFecha" class="form-control" style="width: 200px;" onchange="cargarCitas()">
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover" id="tablaCitas">
+              <thead class="table-light">
+                <tr>
+                  <th>Fecha</th>
+                  <th>Hora</th>
+                  <th>Cliente</th>
+                  <th>Mascota</th>
+                  <th>Servicio</th>
+                  <th>Sucursal</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody id="citasBody">
+                <tr><td colspan="7" class="text-center py-3">Cargando...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIENTES SECTION -->
+    <div id="seccion-clientes" class="seccion-contenido" style="display:none;">
+      <h2 class="mb-4"><i class="bi bi-people"></i> Gestión de Clientes</h2>
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Listado de Clientes</h5>
+          <input type="text" id="buscadorClientes" class="form-control" placeholder="Buscar cliente..." style="width: 250px;" onkeyup="cargarClientes()">
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover" id="tablaClientes">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Email</th>
+                  <th>Teléfono</th>
+                  <th>Mascotas</th>
+                  <th>Citas Totales</th>
+                </tr>
+              </thead>
+              <tbody id="clientesBody">
+                <tr><td colspan="6" class="text-center py-3">Cargando...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICIOS SECTION -->
+    <div id="seccion-servicios" class="seccion-contenido" style="display:none;">
+      <h2 class="mb-4"><i class="bi bi-clipboard-pulse"></i> Servicios Disponibles</h2>
+      <div class="row" id="serviciosContainer">
+        <p class="text-center">Cargando...</p>
+      </div>
+    </div>
+
+    <!-- SUCURSALES SECTION -->
+    <div id="seccion-sucursales" class="seccion-contenido" style="display:none;">
+      <h2 class="mb-4"><i class="bi bi-building"></i> Sucursales</h2>
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover" id="tablaSucursales">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Dirección</th>
+                  <th>Teléfono</th>
+                  <th>Ciudad</th>
+                </tr>
+              </thead>
+              <tbody id="sucursalesBody">
+                <tr><td colspan="5" class="text-center py-3">Cargando...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORTES SECTION -->
+    <div id="seccion-reportes" class="seccion-contenido" style="display:none;">
+      <h2 class="mb-4"><i class="bi bi-graph-up"></i> Reportes del Sistema</h2>
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <div class="card">
+            <div class="card-header bg-info text-white">
+              <h5 class="mb-0">Citas por Estado (Hoy)</h5>
+            </div>
+            <div class="card-body">
+              <div id="reporteCitasEstado" class="text-center">
+                <p class="text-muted">Cargando...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-4">
+          <div class="card">
+            <div class="card-header bg-warning text-white">
+              <h5 class="mb-0">Top 5 Servicios Más Solicitados</h5>
+            </div>
+            <div class="card-body">
+              <div id="reporteServicios" class="list-group">
+                <p class="text-muted text-center">Cargando...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/vendedor-dashboard.js"></script>
 </body>
 </html>

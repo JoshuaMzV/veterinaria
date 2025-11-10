@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Perfil - Vendedor</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="css/admin.css" rel="stylesheet">
+</head>
+<body>
+  <header class="admin-header">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="vendedor-dashboard.html">
+          <i class="bi bi-prescription2"></i> Mascotico Vendedor
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="bi bi-person-circle"></i> Mi Perfil</h5>
+          </div>
+          <div class="card-body">
+            <!-- Información Básica -->
+            <h6 class="mb-3 text-primary">
+              <i class="bi bi-info-circle"></i> Información Personal
+            </h6>
+            <form id="formPerfil" class="mb-4">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label class="form-label">Nombre Completo</label>
+                  <input type="text" class="form-control" id="nombre" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Email</label>
+                  <input type="email" class="form-control" id="email" required>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label class="form-label">Teléfono</label>
+                  <input type="tel" class="form-control" id="telefono">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Rol</label>
+                  <input type="text" class="form-control" id="rol" readonly>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Dirección</label>
+                <input type="text" class="form-control" id="direccion">
+              </div>
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-circle"></i> Guardar Cambios
+              </button>
+              <a href="vendedor-dashboard.html" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+              </a>
+            </form>
+
+            <hr>
+
+            <!-- Cambiar Contraseña -->
+            <h6 class="mb-3 text-primary">
+              <i class="bi bi-lock-fill"></i> Cambiar Contraseña
+            </h6>
+            <form id="formPassword">
+              <div class="mb-3">
+                <label class="form-label">Contraseña Actual</label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="passwordActual" required>
+                  <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('passwordActual')">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Nueva Contraseña</label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="passwordNueva" required placeholder="Min 8 caracteres, mayúscula, número">
+                  <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('passwordNueva')">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+                <small class="form-text text-muted">Debe contener al menos 8 caracteres, una mayúscula y un número</small>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Confirmar Nueva Contraseña</label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="passwordConfirm" required>
+                  <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('passwordConfirm')">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-warning">
+                <i class="bi bi-key-fill"></i> Cambiar Contraseña
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alertas -->
+  <div id="alertaExito" class="alert alert-success alert-dismissible fade show position-fixed bottom-0 end-0 m-3" role="alert" style="display:none;">
+    <i class="bi bi-check-circle"></i> <span id="textoExito"></span>
+    <button type="button" class="btn-close" onclick="this.parentElement.style.display='none'"></button>
+  </div>
+
+  <div id="alertaError" class="alert alert-danger alert-dismissible fade show position-fixed bottom-0 end-0 m-3" role="alert" style="display:none;">
+    <i class="bi bi-exclamation-circle"></i> <span id="textoError"></span>
+    <button type="button" class="btn-close" onclick="this.parentElement.style.display='none'"></button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Scripts de perfil vendedor -->
+  <script src="js/vendedor-perfil.js"></script>
+  <script>
+    let usuarioActual = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      cargarPerfil();
+      document.getElementById('formPerfil').addEventListener('submit', guardarPerfil);
+      document.getElementById('formPassword').addEventListener('submit', cambiarPassword);
+    });
+
+    function cargarPerfil() {
+      const usuario = sessionStorage.getItem('usuario');
+      if (!usuario) {
+        window.location.href = '/login.html';
+        return;
+      }
+      
+      usuarioActual = JSON.parse(usuario);
+      document.getElementById('nombre').value = usuarioActual.nombre || '';
+      document.getElementById('email').value = usuarioActual.email || '';
+      document.getElementById('telefono').value = usuarioActual.telefono || '';
+      document.getElementById('rol').value = usuarioActual.rol || 'vendedor';
+      document.getElementById('direccion').value = usuarioActual.direccion || '';
+    }
+
+    async function guardarPerfil(e) {
+      e.preventDefault();
+      
+      const datos = {
+        nombre: document.getElementById('nombre').value,
+        email: document.getElementById('email').value,
+        telefono: document.getElementById('telefono').value,
+        direccion: document.getElementById('direccion').value
+      };
+
+      try {
+        const response = await fetch('/api/usuarios/perfil', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(datos)
+        });
+
+        const result = await response.json();
+        
+        if (!response.ok) {
+          mostrarError(result.error || 'Error al actualizar perfil');
+          return;
+        }
+
+        mostrarExito('Perfil actualizado correctamente');
+        usuarioActual = { ...usuarioActual, ...datos };
+        sessionStorage.setItem('usuario', JSON.stringify(usuarioActual));
+      } catch (error) {
+        mostrarError('Error: ' + error.message);
+      }
+    }
+
+    async function cambiarPassword(e) {
+      e.preventDefault();
+      
+      const passwordActual = document.getElementById('passwordActual').value;
+      const passwordNueva = document.getElementById('passwordNueva').value;
+      const passwordConfirm = document.getElementById('passwordConfirm').value;
+
+      // Validar
+      if (passwordNueva !== passwordConfirm) {
+        mostrarError('Las contraseñas nuevas no coinciden');
+        return;
+      }
+
+      if (passwordNueva.length < 8) {
+        mostrarError('La nueva contraseña debe tener al menos 8 caracteres');
+        return;
+      }
+
+      const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+      if (!passRegex.test(passwordNueva)) {
+        mostrarError('La contraseña debe contener mayúscula, minúscula y número');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/usuarios/perfil', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            passwordActual,
+            passwordNueva
+          })
+        });
+
+        const result = await response.json();
+        
+        if (!response.ok) {
+          mostrarError(result.error || 'Error al cambiar contraseña');
+          return;
+        }
+
+        mostrarExito('Contraseña cambiada correctamente');
+        document.getElementById('formPassword').reset();
+      } catch (error) {
+        mostrarError('Error: ' + error.message);
+      }
+    }
+
+    function togglePassword(inputId) {
+      const input = document.getElementById(inputId);
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    function mostrarExito(mensaje) {
+      document.getElementById('textoExito').textContent = mensaje;
+      document.getElementById('alertaExito').style.display = 'block';
+      setTimeout(() => {
+        document.getElementById('alertaExito').style.display = 'none';
+      }, 5000);
+    }
+
+    function mostrarError(mensaje) {
+      document.getElementById('textoError').textContent = mensaje;
+      document.getElementById('alertaError').style.display = 'block';
+      setTimeout(() => {
+        document.getElementById('alertaError').style.display = 'none';
+      }, 5000);
+    }
+  </script>
+</body>
+</html>
